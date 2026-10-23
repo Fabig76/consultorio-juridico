@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consultorio Jurídico 2026-3 · Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0e0c;
+    --surface: #161613;
+    --surface-2: #1d1d18;
+    --ink: #ece6d8;
+    --muted: #9a937f;
+    --line: #2b2a24;
+    --accent: #d5a54a;
+    --accent-soft: rgba(213, 165, 74, 0.12);
+    --good: #8cc08c;
+    --bad: #e08a78;
+    --warn: #e0b356;
+    --serif: "Fraunces", Georgia, "Times New Roman", serif;
+    --sans: "Inter", system-ui, -apple-system, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    padding-bottom: 80px;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---------- Header ---------- */
+  header { padding: 56px 0 28px; border-bottom: 1px solid var(--line); }
+  .overline {
+    font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 14px;
+  }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(2.4rem, 6vw, 3.6rem); line-height: 1.05; letter-spacing: -0.02em; }
+  .subline { margin-top: 12px; color: var(--muted); font-size: 1rem; }
+  .badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+  .badge {
+    font-family: var(--mono); font-size: 0.72rem; padding: 6px 12px;
+    border: 1px solid var(--line); border-radius: 999px; color: var(--muted);
+    background: var(--surface);
+  }
+  .badge.key { color: var(--accent); border-color: rgba(213,165,74,0.35); background: var(--accent-soft); }
+
+  /* ---------- Deadline banner ---------- */
+  .banner {
+    margin: 28px 0; border: 1px solid var(--line); border-radius: 14px;
+    background: linear-gradient(180deg, var(--surface-2), var(--surface));
+    padding: 24px 26px; display: flex; flex-wrap: wrap; gap: 20px; align-items: center;
+    justify-content: space-between;
+  }
+  .banner .lbl { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .banner .deadline-title { font-family: var(--serif); font-size: 1.35rem; margin-top: 4px; }
+  .banner .days { font-family: var(--serif); font-weight: 700; font-size: 3.2rem; line-height: 1; color: var(--accent); }
+  .banner .days small { font-family: var(--sans); font-weight: 400; font-size: 0.9rem; color: var(--muted); }
+  .banner .days-box { text-align: center; min-width: 130px; }
+  .banner .progressbar { flex: 1 1 100%; height: 6px; background: var(--line); border-radius: 999px; overflow: hidden; }
+  .banner .progressbar > i { display: block; height: 100%; background: var(--accent); width: 0%; transition: width .4s ease; border-radius: 999px; }
+  .banner .proglabel { flex: 1 1 100%; font-family: var(--mono); font-size: 0.75rem; color: var(--muted); text-align: right; }
+
+  /* ---------- Progress summary ---------- */
+  .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin: 28px 0; }
+  @media (max-width: 760px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+  .stat {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    padding: 16px; position: relative;
+  }
+  .stat .w { font-family: var(--mono); font-size: 0.72rem; color: var(--accent); }
+  .stat .t { font-family: var(--serif); font-size: 1.02rem; margin-top: 4px; }
+  .stat .s { margin-top: 10px; font-family: var(--mono); font-size: 0.72rem; display: flex; align-items: center; gap: 6px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line); display: inline-block; flex: none; }
+  .dot.done { background: var(--good); }
+  .dot.part { background: var(--warn); }
+  .dot.todo { background: var(--line); }
+
+  /* ---------- Activity sections ---------- */
+  section.act {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
+    margin: 20px 0; overflow: hidden;
+  }
+  .act-head {
+    padding: 22px 26px; display: flex; align-items: baseline; gap: 14px;
+    border-bottom: 1px solid var(--line); flex-wrap: wrap;
+  }
+  .act-head .num { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); }
+  .act-head h2 { font-family: var(--serif); font-weight: 600; font-size: 1.45rem; flex: 1; }
+  .act-head .weight { font-family: var(--mono); font-size: 0.82rem; color: var(--accent); background: var(--accent-soft); padding: 4px 10px; border-radius: 999px; }
+  .act-body { padding: 20px 26px 24px; }
+  .act-body p.hint { color: var(--muted); font-size: 0.9rem; margin-bottom: 16px; }
+
+  /* checklist */
+  .check { display: flex; align-items: flex-start; gap: 12px; padding: 9px 10px; border-radius: 8px; cursor: pointer; }
+  .check:hover { background: var(--surface-2); }
+  .check input { appearance: none; -webkit-appearance: none; width: 20px; height: 20px; flex: none; margin-top: 1px;
+    border: 1.5px solid var(--muted); border-radius: 6px; cursor: pointer; position: relative; background: transparent; }
+  .check input:checked { background: var(--accent); border-color: var(--accent); }
+  .check input:checked::after { content: "✓"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #0e0e0c; font-size: 13px; font-weight: 700; }
+  .check input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .check span { font-size: 0.95rem; }
+  .check .meta { display: block; font-family: var(--mono); font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+  .check .done-x { text-decoration: line-through; color: var(--muted); }
+  .divider { border: none; border-top: 1px solid var(--line); margin: 14px 0; }
+
+  /* charlas table */
+  .charla { display: flex; align-items: center; gap: 14px; padding: 12px 10px; border-radius: 8px; }
+  .charla:nth-child(odd) { background: var(--surface-2); }
+  .charla .d { font-family: var(--mono); font-size: 0.82rem; width: 110px; flex: none; color: var(--muted); }
+  .charla .n { flex: 1; font-size: 0.95rem; }
+  .charla .st { font-family: var(--mono); font-size: 0.72rem; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); flex: none; }
+  .st.pas { color: var(--muted); }
+  .st.hoy { color: var(--accent); border-color: rgba(213,165,74,0.4); }
+  .st.fut { color: var(--good); border-color: rgba(140,192,140,0.35); }
+
+  /* calendar button */
+  a.cal {
+    display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 0.74rem;
+    color: var(--accent); text-decoration: none; border: 1px solid rgba(213,165,74,0.4);
+    padding: 6px 12px; border-radius: 999px; transition: all .15s ease; white-space: nowrap;
+  }
+  a.cal:hover { background: var(--accent-soft); }
+  a.cal.inline { margin-left: 8px; padding: 3px 10px; }
+
+  /* alt box */
+  .alt { background: var(--surface-2); border: 1px dashed var(--line); border-radius: 10px; padding: 14px 16px; margin-top: 16px; color: var(--muted); font-size: 0.86rem; }
+
+  /* locked block */
+  .locked { opacity: 0.55; }
+  .locked .tag { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--warn); }
+
+  /* footer */
+  footer { margin-top: 44px; padding-top: 24px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.85rem; }
+  footer h3 { font-family: var(--serif); color: var(--ink); font-size: 1.1rem; margin-bottom: 10px; }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer ul { list-style: none; }
+  footer li { padding: 3px 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="overline">Corporación Universitaria Americana · Consultorio Jurídico</div>
+    <h1>Tracker 2026-3</h1>
+    <p class="subline">Heyler Fabio Guaza Lesmes · Estudiante · Consultorio Jurídico III</p>
+    <div class="badges">
+      <span class="badge key">Nacionalización (virtual)</span>
+      <span class="badge key">Modalidad Intensiva</span>
+      <span class="badge">CJ III → CJ IV</span>
+      <span class="badge">Periodo 2026-3</span>
+    </div>
+  </header>
+
+  <section class="banner">
+    <div>
+      <div class="lbl">Bloque 1 · CJ III — cierra el sáb 7 nov 2026</div>
+      <div class="deadline-title">Tienes que terminar las 5 actividades</div>
+    </div>
+    <div class="days-box">
+      <div class="days" id="countdown">—</div>
+      <small>días restantes</small>
+    </div>
+    <div class="progressbar"><i id="bar"></i></div>
+    <div class="proglabel" id="proglabel">0% completado</div>
+  </section>
+
+  <div class="grid">
+    <div class="stat"><div class="w">25%</div><div class="t">Casos hipotéticos</div><div class="s"><span class="dot part" id="dot-casos"></span><span id="s-casos">0/4</span></div></div>
+    <div class="stat"><div class="w">25%</div><div class="t">Turnos</div><div class="s"><span class="dot part" id="dot-turnos"></span><span id="s-turnos">0/6</span></div></div>
+    <div class="stat"><div class="w">10%</div><div class="t">Salida al barrio</div><div class="s"><span class="dot part" id="dot-barrio"></span><span id="s-barrio">0/5</span></div></div>
+    <div class="stat"><div class="w">10%</div><div class="t">Charlas</div><div class="s"><span class="dot part" id="dot-charlas"></span><span id="s-charlas">0/7</span></div></div>
+    <div class="stat"><div class="w">30%</div><div class="t">Conciliación</div><div class="s"><span class="dot part" id="dot-conc"></span><span id="s-conc">0/2</span></div></div>
+  </div>
+
+  <!-- ============ CASOS ============ -->
+  <section class="act">
+    <div class="act-head"><span class="num">01</span><h2>Casos hipotéticos</h2><span class="weight">25%</span></div>
+    <div class="act-body">
+      <p class="hint">4 casos en el software. Se resuelven en la plataforma — la fecha límite aparece en el software.</p>
+      <label class="check"><input type="checkbox" data-key="caso-1"><span>2026-0744 · Laboral<span class="meta">Liquidación de prestaciones sociales</span></span></label>
+      <label class="check"><input type="checkbox" data-key="caso-2"><span>2026-1154 · Civil<span class="meta">Contrato de compraventa</span></span></label>
+      <label class="check"><input type="checkbox" data-key="caso-3"><span>2026-1821 · Civil<span class="meta">Contrato de compraventa</span></span></label>
+      <label class="check"><input type="checkbox" data-key="caso-4"><span>2026-2581 · Penal<span class="meta">Lesiones personales</span></span></label>
+    </div>
+  </section>
+
+  <!-- ============ TURNOS ============ -->
+  <section class="act">
+    <div class="act-head"><span class="num">02</span><h2>Turnos de atención</h2><span class="weight">25%</span></div>
+    <div class="act-body">
+      <p class="hint">18 horas (6 turnos × 3 h) en un lugar de <strong>tu comunidad</strong> que tú consigues: junta de acción comunal, personería o colegio.</p>
+      <label class="check"><input type="checkbox" data-key="turno-1"><span>Pedir la <strong>constancia de unidad + ARL</strong> en el software</span></label>
+      <label class="check"><input type="checkbox" data-key="turno-2"><span>Descargar la <strong>planilla de asistencia</strong></span></label>
+      <label class="check"><input type="checkbox" data-key="turno-3"><span>Conseguir el lugar de la comunidad</span></label>
+      <label class="check"><input type="checkbox" data-key="turno-4"><span>Completar 18 h de turnos (6 × 3 h)</span></label>
+      <label class="check"><input type="checkbox" data-key="turno-5"><span>Registrar en el software los datos de cada persona atendida</span></label>
+      <label class="check"><input type="checkbox" data-key="turno-6"><span>Pedir <strong>certificado</strong> al lugar y subirlo al software</span></label>
+    </div>
+  </section>
+
+  <!-- ============ SALIDA AL BARRIO ============ -->
+  <section class="act">
+    <div class="act-head"><span class="num">03</span><h2>Salida al barrio</h2><span class="weight">10%</span></div>
+    <div class="act-body">
+      <p class="hint">Una <strong>charla en un colegio</strong> (grados 10 y 11) que tú consigues. Temas ya definidos.</p>
+      <label class="check"><input type="checkbox" data-key="barrio-1"><span>Pedir la constancia de unidad + ARL</span></label>
+      <label class="check"><input type="checkbox" data-key="barrio-2"><span>Descargar la planilla de asistencia</span></label>
+      <label class="check"><input type="checkbox" data-key="barrio-3"><span>Conseguir el colegio</span></label>
+      <label class="check"><input type="checkbox" data-key="barrio-4"><span>Dar la charla y recoger la planilla firmada</span></label>
+      <label class="check"><input type="checkbox" data-key="barrio-5"><span>Subir las evidencias al software</span></label>
+      <div class="alt">⚠️ Si no consigues colegio → <strong>Opción A:</strong> 8 h más de turnos, o <strong>Opción B:</strong> Master Congreso (certificado + informe). Ambas se suben al software.</div>
+    </div>
+  </section>
+
+  <!-- ============ CHARLAS ============ -->
+  <section class="act">
+    <div class="act-head"><span class="num">04</span><h2>Charlas de actualización</h2><span class="weight">10%</span></div>
+    <div class="act-body">
+      <p class="hint">7 charlas por Teams (mié y vie, 3:00–5:00 p.m. hora Colombia). La nota = asistencia. <strong>En vivo:</strong> llena el Google Form que publican en el chat de Teams antes de que termine. <strong>Grabada:</strong> mírala en el software (cuenta solo hasta el 7 nov).</p>
+
+      <div class="charla"><span class="d">mié 14 oct</span><span class="n">Charla 1</span><span class="st pas">pasó · ver grabación</span></div>
+      <div class="charla"><span class="d">vie 16 oct</span><span class="n">Charla 2</span><span class="st pas">pasó · ver grabación</span></div>
+      <div class="charla"><span class="d">mié 21 oct</span><span class="n">Charla 3</span><span class="st pas">pasó · ver grabación</span></div>
+      <div class="charla"><span class="d">vie 23 oct</span><span class="n">Charla 4</span><span class="st hoy">hoy</span><a class="cal inline" data-title="Charla de actualización #4 — Consultorio Jurídico" data-start="20261023T150000" data-end="20261023T170000" data-details="Entra por Teams a las 3:00 p.m. y llena el Google Form del chat antes de que termine la charla.">Cal ↗</a></div>
+      <div class="charla"><span class="d">mié 28 oct</span><span class="n">Charla 5</span><span class="st fut">pendiente</span><a class="cal inline" data-title="Charla de actualización #5 — Consultorio Jurídico" data-start="20261028T150000" data-end="20261028T170000" data-details="Entra por Teams a las 3:00 p.m. y llena el Google Form del chat antes de que termine la charla.">Cal ↗</a></div>
+      <div class="charla"><span class="d">vie 30 oct</span><span class="n">Charla 6</span><span class="st fut">pendiente</span><a class="cal inline" data-title="Charla de actualización #6 — Consultorio Jurídico" data-start="20261030T150000" data-end="20261030T170000" data-details="Entra por Teams a las 3:00 p.m. y llena el Google Form del chat antes de que termine la charla.">Cal ↗</a></div>
+      <div class="charla"><span class="d">mié 4 nov</span><span class="n">Charla 7</span><span class="st fut">pendiente</span><a class="cal inline" data-title="Charla de actualización #7 — Consultorio Jurídico" data-start="20261104T150000" data-end="20261104T170000" data-details="Entra por Teams a las 3:00 p.m. y llena el Google Form del chat antes de que termine la charla.">Cal ↗</a></div>
+    </div>
+  </section>
+
+  <!-- ============ CONCILIACIÓN ============ -->
+  <section class="act">
+    <div class="act-head"><span class="num">05</span><h2>Centro de Conciliación</h2><span class="weight">30%</span></div>
+    <div class="act-body">
+      <p class="hint">Para <strong>CJ III</strong>: ver las charlas del Centro de Conciliación en el software y responder los formularios.</p>
+      <label class="check"><input type="checkbox" data-key="conc-1"><span>Ver las charlas del Centro de Conciliación en el software</span></label>
+      <label class="check"><input type="checkbox" data-key="conc-2"><span>Responder los formularios de evaluación</span></label>
+      <div class="alt">ℹ️ En <strong>CJ IV</strong> esto cambia: tendrás que observar <strong>2 audiencias de conciliación</strong> por internet.</div>
+    </div>
+  </section>
+
+  <!-- ============ BLOQUE 2 ============ -->
+  <section class="act locked">
+    <div class="act-head"><span class="num">→</span><h2>Bloque 2 · CJ IV</h2><span class="tag">se activa el 9 nov</span></div>
+    <div class="act-body">
+      <p class="hint">Del lun 9 nov al sáb 19 dic 2026. Mismas 5 actividades, otra vez: 4 casos hipotéticos, 18 h de turnos, 1 charla en colegio, 7 charlas (bloque 2) y conciliación (2 audiencias como observador).</p>
+      <a class="cal" data-title="Inicio Bloque 2 — Consultorio Jurídico CJ IV" data-start="20261109" data-end="20261110" data-details="Se activa el material del CJ IV en la plataforma.">Recordar inicio · 9 nov ↗</a>
+      <a class="cal" style="margin-left:8px" data-title="Cierre Bloque 2 — Consultorio Jurídico CJ IV" data-start="20261219" data-end="20261220" data-details="Último día para terminar las 5 actividades del CJ IV.">Recordar cierre · 19 dic ↗</a>
+    </div>
+  </section>
+
+  <footer>
+    <h3>Canales oficiales (solo correo y Teams — no hay teléfono ni WhatsApp)</h3>
+    <ul>
+      <li>Dirección Administrativa — <a href="mailto:diradminjuridico@americana.edu.co">diradminjuridico@americana.edu.co</a> (José Agudelo Correa)</li>
+      <li>Asistente Jurídica — <a href="mailto:asisjuridicomed@americana.edu.co">asisjuridicomed@americana.edu.co</a></li>
+      <li>Recepción — <a href="mailto:recepcionmed@coruniamericana.edu.co">recepcionmed@coruniamericana.edu.co</a></li>
+      <li>Repartos — <a href="mailto:repartomed@americana.edu.co">repartomed@americana.edu.co</a></li>
+    </ul>
+    <p style="margin-top:14px">Plataforma: <a href="https://consultorio.americanamed.edu.co/login">consultorio.americanamed.edu.co</a> · Asistencia charlas: <a href="https://consultorio.americanamed.edu.co/asistencia">consultorio.americanamed.edu.co/asistencia</a></p>
+  </footer>
+</div>
+
+<script>
+  // ---- countdown to 7 nov 2026 (Colombia, UTC-5 fijo) ----
+  const deadline = new Date("2026-11-07T23:59:59-05:00");
+  function updCountdown() {
+    const now = new Date();
+    const d = Math.max(0, Math.ceil((deadline - now) / 86400000));
+    document.getElementById("countdown").textContent = d;
+  }
+  updCountdown();
+
+  // ---- build calendar links (encoding handled here) ----
+  document.querySelectorAll("a.cal").forEach(a => {
+    const u = new URL("https://calendar.google.com/calendar/render");
+    u.searchParams.set("action", "TEMPLATE");
+    u.searchParams.set("text", a.dataset.title || "");
+    u.searchParams.set("dates", (a.dataset.start || "") + "/" + (a.dataset.end || ""));
+    u.searchParams.set("ctz", "America/Bogota");
+    if (a.dataset.details) u.searchParams.set("details", a.dataset.details);
+    a.href = u.toString();
+    a.target = "_blank"; a.rel = "noopener";
+  });
+
+  // ---- checkbox persistence + progress ----
+  const PREFIX = "cj3-";
+  const groups = { casos: 4, turnos: 6, barrio: 5, charlas: 7, conc: 2 };
+  // charlas aren't checkboxes; count them manually as 3 done (grabación pendiente) — handled separately
+  const checkboxes = [...document.querySelectorAll('input[type="checkbox"]')];
+
+  function readState() {
+    const s = {};
+    checkboxes.forEach(cb => {
+      const v = localStorage.getItem(PREFIX + cb.dataset.key);
+      if (v === "1") { cb.checked = true; }
+      s[cb.dataset.key] = cb.checked;
+    });
+    return s;
+  }
+  readState();
+
+  function applyDoneStyle() {
+    checkboxes.forEach(cb => {
+      const sp = cb.nextElementSibling;
+      if (cb.checked) sp.classList.add("done-x"); else sp.classList.remove("done-x");
+    });
+  }
+  applyDoneStyle();
+
+  function recompute() {
+    const g = { casos: 0, turnos: 0, barrio: 0, conc: 0 };
+    checkboxes.forEach(cb => {
+      if (!cb.checked) return;
+      const k = cb.dataset.key;
+      if (k.startsWith("caso")) g.casos++;
+      else if (k.startsWith("turno")) g.turnos++;
+      else if (k.startsWith("barrio")) g.barrio++;
+      else if (k.startsWith("conc")) g.conc++;
+    });
+    const totalItems = checkboxes.length;
+    const doneItems = Object.values(g).reduce((a,b)=>a+b,0);
+    const pct = Math.round(doneItems / totalItems * 100);
+
+    document.getElementById("s-casos").textContent = g.casos + "/4";
+    document.getElementById("s-turnos").textContent = g.turnos + "/6";
+    document.getElementById("s-barrio").textContent = g.barrio + "/5";
+    document.getElementById("s-conc").textContent = g.conc + "/2";
+    document.getElementById("s-charlas").textContent = "3/7*";
+    document.getElementById("bar").style.width = pct + "%";
+    document.getElementById("proglabel").textContent = pct + "% de la checklist · charlas 3/7 grabación pendiente";
+  }
+  recompute();
+
+  checkboxes.forEach(cb => {
+    cb.addEventListener("change", () => {
+      localStorage.setItem(PREFIX + cb.dataset.key, cb.checked ? "1" : "0");
+      applyDoneStyle();
+      recompute();
+    });
+  });
+</script>
+</body>
+</html>
